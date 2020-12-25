@@ -1,26 +1,9 @@
 package org.xblackcat.adventofcode.year2020.day19.rules;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 record BulkRule(int id, Rule[]... rules) implements Rule {
-    @Override
-    public int test(
-            String text,
-            int offset,
-            boolean canBeLast
-    ) {
-        for (Rule[] sequences : rules) {
-            int advance = matchSequence(text, offset, canBeLast, sequences);
-            if (advance > 0) {
-                return advance;
-            }
-        }
-        return 0;
-    }
-
     @Override
     public Rule pack() {
         List<Rule[]> packedRules = new ArrayList<>(rules.length);
@@ -50,7 +33,6 @@ record BulkRule(int id, Rule[]... rules) implements Rule {
 
     @Override
     public boolean canBePacked() {
-
         return true;
     }
 
@@ -71,11 +53,37 @@ record BulkRule(int id, Rule[]... rules) implements Rule {
         return new Match(-1, builder.toString());
     }
 
-    private int matchSequence(String text, int offset, boolean canBeLast, Rule... sequences) {
+    @Override
+    public Set<String> getMatchSuffixes(String text) {
+        Set<String> result = new HashSet<>();
+        for (Rule[] sequences : rules) {
+            Set<String> suffixes = Set.of(text);
+            for (Rule r : sequences) {
+                suffixes = suffixes.stream().map(r::getMatchSuffixes).collect(HashSet::new, Set::addAll, Set::addAll);
+            }
+
+            result.addAll(suffixes);
+        }
+
+        return result;
+    }
+
+    @Override
+    public int test(String text, int offset) {
+        for (Rule[] sequences : rules) {
+            int advance = matchSequence(text, offset, sequences);
+            if (advance > 0) {
+                return advance;
+            }
+        }
+        return 0;
+    }
+
+    private int matchSequence(String text, int offset, Rule... sequences) {
         int totalAdvance = 0;
         for (Rule r : sequences) {
             boolean lastRule = r == sequences[sequences.length - 1];
-            int advance = r.test(text, offset + totalAdvance, canBeLast && lastRule);
+            int advance = r.test(text, offset + totalAdvance);
             if (advance == 0) {
                 return 0;
             }

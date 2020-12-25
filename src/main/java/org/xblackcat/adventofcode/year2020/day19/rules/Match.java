@@ -1,5 +1,8 @@
 package org.xblackcat.adventofcode.year2020.day19.rules;
 
+import java.util.Collections;
+import java.util.Set;
+
 record Match(int id, String value) implements Rule {
     static Rule of(int id, String ruleText) {
         if (ruleText.startsWith("\"") && ruleText.endsWith("\"")) {
@@ -10,23 +13,20 @@ record Match(int id, String value) implements Rule {
     }
 
     @Override
-    public int test(String text, int offset, boolean canBeLast) {
-        boolean completeMatch = text.equals(text.substring(0, offset) + value);
-        if (completeMatch)
-            if (!canBeLast) {
-                System.out.println(" =-> " + text.substring(0, offset) + "[" + value + "]<*> !!!");
-                return 0;
-            } else {
-                System.out.println(" =-> " + text.substring(0, offset) + "[" + value + "]");
-                return value.length();
-            }
-
+    public int test(String text, int offset) {
         if (text.regionMatches(offset, value, 0, value.length())) {
-            System.out.println(" =-> " + text.substring(0, offset) + "[" + value + "]" + (canBeLast ? "" : "<*>"));
             return value.length();
         } else {
-            System.out.println(" =-> " + text.substring(0, offset) + "[!" + value + "]" + (canBeLast ? "" : "<*>"));
             return 0;
+        }
+    }
+
+    @Override
+    public Set<String> getMatchSuffixes(String text) {
+        if (text.regionMatches(0, value, 0, value.length())) {
+            return Set.of(text.substring(value.length()));
+        } else {
+            return Collections.emptySet();
         }
     }
 

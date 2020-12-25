@@ -6,6 +6,7 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -96,9 +97,9 @@ public class RuleProcessor {
     }
 
     public boolean matches(String line) {
-        final int test = mainRule.test(line, 0, true);
-        boolean matches = test == line.length();
-        System.out.println(line + "\n-> " + matches + "(" + test + "/" + line.length() + ")");
+        final Set<String> suffixes = mainRule.getMatchSuffixes(line);
+        boolean matches = suffixes.contains("");
+        System.out.println(line + "\n-> " + matches + " " + suffixes);
         return matches;
     }
 }

@@ -184,13 +184,13 @@ public class Day19 {
     private static void part2() throws IOException {
         final RuleProcessor processor = new RuleProcessor();
         try (
-                final InputStream stream = Day17.class.getResourceAsStream("/year2020/day19_test2.txt");
+                final InputStream stream = Day17.class.getResourceAsStream("/year2020/day19.txt");
                 final BufferedReader reader = new BufferedReader(new InputStreamReader(stream))
         ) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.isBlank()) {
-//                    processor.packRules();
+                    processor.packRules();
                     break;
                 }
 

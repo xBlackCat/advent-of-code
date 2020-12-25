@@ -2,6 +2,8 @@ package org.xblackcat.adventofcode.year2020.day19.rules;
 
 import gnu.trove.map.TIntObjectMap;
 
+import java.util.Set;
+
 /**
  *
  */
@@ -11,16 +13,21 @@ public record RefRule(int id, int refId, TIntObjectMap<Rule> ruleCache) implemen
     }
 
     @Override
-    public int test(
-            String text,
-            int offset,
-            boolean canBeLast
-    ) {
+    public int test(String text, int offset) {
         final Rule rule = getRule();
         if (rule == null) {
             throw new IllegalStateException("Referencing unknown rule #" + refId);
         }
-        return rule.test(text, offset, canBeLast);
+        return rule.test(text, offset);
+    }
+
+    @Override
+    public Set<String> getMatchSuffixes(String text) {
+        final Rule rule = getRule();
+        if (rule == null) {
+            throw new IllegalStateException("Referencing unknown rule #" + refId);
+        }
+        return rule.getMatchSuffixes(text);
     }
 
     @Override
