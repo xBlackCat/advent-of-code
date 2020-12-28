@@ -154,23 +154,18 @@ public class Day23 {
             while (nextCup == a || nextCup == b || nextCup == c) {
                 nextCup = decrement(nextCup, length);
             }
-            int j = 0;
-            while (j < length - 4) {
-                buffer[j] = buffer[j + 4];
-                if (buffer[j] == nextCup) {
+            int j = 4;
+            while (j < length) {
+                if (buffer[j++] == nextCup) {
                     break;
                 }
-                j++;
             }
-            j++;
-            buffer[j] = a;
-            j++;
-            buffer[j] = b;
-            j++;
-            buffer[j] = c;
-            j++;
-            if (j < length - 1) {
-                System.arraycopy(buffer, j + 1, buffer, j, length - j - 1);
+            System.arraycopy(buffer, 4, buffer, 0, j - 4);
+            buffer[j - 4] = a;
+            buffer[j - 3] = b;
+            buffer[j - 2] = c;
+            if (j < length) {
+                System.arraycopy(buffer, j, buffer, j - 1, length - j);
             }
             buffer[length - 1] = currentCup;
             if ((i & 0xFFFF) == 0) {
